@@ -45,7 +45,7 @@ lasek_all_step2_ver1 <- randomForest(x = cbind(train, posture), y = train_labels
 
 generate_submission(lasek_all_step1_ver1, lasek_all_step2_ver1, test, file.path("..", "submissions", "submission01.csv"))
 
-# 2. We set attibute `nodesize = 3` to reduce overfitting to training data
+# 2. We set attibute `nodesize = 3` to reduce overfitting to the training data
 set.seed(5)
 lasek_all_step1_ver2 <- randomForest(x = train, y = train_labels$posture, 
                                      ntree = 700, mtry = 300, sampsize = rep(400, 5), 
@@ -56,7 +56,8 @@ lasek_all_step2_ver2 <- randomForest(x = cbind(train, posture), y = train_labels
 
 generate_submission(lasek_all_step1_ver2, lasek_all_step2_ver2, test, file.path("..", "submissions", "submission02.csv"))
 
-# 3. We drop data from the left arm of a firefighters as well as some part of quantiles
+# 3. We drop data from the left arm (due to missing values in the test set) as well as some part of quantiles (to further reduce 
+# the fit to the training set with the aim of improving generalisability of the model)
 set.seed(5)
 select <- !stri_detect_regex(colnames(train), "((acc)|(gyr))_left_arm_(x|y|z)") & !stri_detect_regex(colnames(train), "(q[02468])|(q95)|(q99)")
 lasek_all_step1_ver3 <- randomForest(x = train[,select], y = train_labels$posture, 
